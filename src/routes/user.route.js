@@ -6,7 +6,8 @@ import {
     updatePassword,
     getCurrentUser,
     updateAccountDetails,
-    updateUserAvatar
+    updateUserAvatar,
+    getUserChannelProfile
 } from '../controllers/user.controller.js'
 import {uploads} from '../middlewares/multer.middleware.js'
 import {verifyJwt} from '../middlewares/auth.middleware.js';
@@ -27,4 +28,5 @@ router.route('/update-password').post(uploads.none(),verifyJwt,updatePassword);
 router.route('/update-account').post(verifyJwt,updateAccountDetails);
 router.route('/get-current-user').post(verifyJwt,getCurrentUser);
 router.route('/update-file').post(verifyJwt,uploads.single('avatar'),updateUserAvatar);
+router.route('/user-profile/:id').post(verifyJwt,getUserChannelProfile)
 export default router;

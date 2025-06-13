@@ -254,6 +254,81 @@ const updateUserAvatar = asyncHandler(async(req ,res) =>{
    )
 })
 
+const getUserChannelProfile = asyncHandler(async(req,res)=>{  
+   //getting username
+   //writing aggregation pipelines for user profile
+   //sending mess to frontend as well in pipelines
+   //return res
+
+   const username = req.params;
+   if(!username) throw new ApiError(400,'username is missing')
+   
+   const profile =await User.aggregate(
+      [
+         {
+            $match: {
+               username:username
+            }
+         },
+         {
+            $lookup:{
+               from: "subscribers",
+               localField: "_id",
+               foreignField: "channel",
+               as: "subscibers"
+            }
+         },
+         {
+            $lookup:{
+               from: "subscribers",
+               localField: "_id",
+               foreignField: "subscriber",
+               as: "subscribedTo"
+            }
+         },
+         {
+            $addFields:{
+               subscribersCount:{
+                  $size: "subscibers"
+               },
+               subscribedTosCount:{
+                  $size: "subscibedTo"
+               },
+               isSubscribed:{
+                  $cond:{
+                     //its like whenever u are seeing someones account for frontend to enable they need to know
+                     //whether this user is subscibed to that channel or not to show subscribed symbol gave flag
+                     if: {$in: [req.user?._id,"$subscribers.subscriber"]},
+                     then: true,
+                     else: false
+                  }
+               }
+            }
+         },
+         {
+            $project:{
+                fullName: 1,
+                username: 1,
+                subscribersCount: 1,
+                channelsSubscribedToCount: 1,
+                isSubscribed: 1,
+                avatar: 1,
+                coverImage: 1,
+                email: 1
+            }
+         }
+      ]
+   )
+    if (!profile?.length) {
+        throw new ApiError(404, "channel does not exists")
+    }
+
+   return res
+   .status(200)
+   .json(
+      new ApiResponse(200,channel[0],"User profile fetched successfully")
+   )
+})
 
 
 
@@ -265,5 +340,6 @@ export {
    updatePassword,
    getCurrentUser,
    updateAccountDetails,
-   updateUserAvatar
+   updateUserAvatar,
+   getUserChannelProfile
 };
