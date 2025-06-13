@@ -24,6 +24,7 @@ router.route('/login').post(uploads.none(),LoginUser); //for enabling form data 
 router.route('/logout').post(verifyJwt,LogoutUser);
 router.route('/refresh-token').post(generateNewRefreshToken);
 router.route('/update-password').post(uploads.none(),verifyJwt,updatePassword);
-router.route('/update-account').post(updateAccountDetails);
+router.route('/update-account').post(verifyJwt,updateAccountDetails);
+router.route('/get-current-user').post(verifyJwt,getCurrentUser);
 router.route('/update-file').post(verifyJwt,uploads.single('avatar'),updateUserAvatar);
 export default router;
