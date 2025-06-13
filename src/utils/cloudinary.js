@@ -16,7 +16,7 @@ const uploadCloudinary=async function(localPath){
         resource_type:"auto"
     });
     fs.unlinkSync(localPath);
-     console.log(response);  //gives url original_filename format resource_type 
+    //  console.log(response);  //gives url original_filename format resource_type 
     return response;
     }
     catch(err){
