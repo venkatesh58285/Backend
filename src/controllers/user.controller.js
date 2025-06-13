@@ -176,6 +176,61 @@ const generateNewRefreshToken = asyncHandler(async(req,res)=>{
    ))
 })
 
+const updatePassword = asyncHandler(async (req,res)=>{
+   const {oldPass,newPass} = req.body;
+   if(!oldPass && !newPass) throw new ApiError("All fields are required");
+
+   const user = await User.findById(req.user?._id);
+   const validate =await user.isPasswordCorrect(oldPass);
+   if(!validate) throw new ApiError(400,"invalid old password");
+
+   user.password = newPass;
+   await user.save({
+      validateBeforeSave:false
+   })
+   // console.log(user);
+   return res
+          .status(200)
+          .json(
+            new ApiResponse(200,{},"Password changed successfully")
+          )
+} )
+
+const getCurrentUser = asyncHandler(async(req, res) => {
+    return res
+    .status(200)
+    .json(new ApiResponse(
+        200,
+        req.user,
+        "User fetched successfully"
+    ))
+})
+
+const updateAccountDetails = asyncHandler(async(req, res) => {
+    const {fullName, email} = req.body
+
+    if (!fullName || !email) {
+        throw new ApiError(400, "All fields are required")
+    }
+
+    const user = await User.findByIdAndUpdate(
+        req.user?._id,
+        {
+            $set: {
+                fullName,
+                email: email
+            }
+        },
+        {new: true}
+        
+    ).select("-password")
+
+    return res
+    .status(200)
+    .json(new ApiResponse(200, user, "Account details updated successfully"))
+});
+
+
 
 
 
@@ -183,5 +238,6 @@ export {
    RegisterUser,
    LoginUser,
    LogoutUser,
-   generateNewRefreshToken
+   generateNewRefreshToken,
+   updatePassword
 };
