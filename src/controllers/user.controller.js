@@ -263,7 +263,7 @@ const getUserChannelProfile = asyncHandler(async(req,res)=>{
    const username = req.params;
    if(!username) throw new ApiError(400,'username is missing')
    
-   const profile =await User.aggregate(
+   const channel =await User.aggregate(
       [
          {
             $match: {
@@ -289,10 +289,10 @@ const getUserChannelProfile = asyncHandler(async(req,res)=>{
          {
             $addFields:{
                subscribersCount:{
-                  $size: "subscibers"
+                  $size: "$subscibers"
                },
                subscribedTosCount:{
-                  $size: "subscibedTo"
+                  $size: "$subscibedTo"
                },
                isSubscribed:{
                   $cond:{
@@ -332,7 +332,7 @@ const getUserChannelProfile = asyncHandler(async(req,res)=>{
 
 const getWatchHistory = asyncHandler(async(req,res) =>{
    //get user through req.user from middleware as usual
-   //nested pipelines one is for linking watchHistory with video
+   //nested pipelines/sub-pipelines one is for linking watchHistory with video
    //other is for video owner to user
    const user = User.aggregate([
       {

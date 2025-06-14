@@ -6,6 +6,7 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
+app.use(express.static('public'))
 app.use(cookieParser());
 // app.use(cors()); //alow all
 // var whitelist = ['http://localhost:5000', 'http://example2.com']
@@ -24,10 +25,11 @@ app.get('/',(req,res)=>{
    res.send("working");
 })
 
-import router from "./routes/user.route.js";
+import router1 from "./routes/user.route.js";
+import router2 from "./routes/subscription.route.js";
 
-app.use('/api/v1/users',router);
-
+app.use('/api/v1/users',router1);
+app.use('/api/v1/subscriptions',router2);
 
 
 
