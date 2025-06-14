@@ -7,7 +7,8 @@ import {
     getCurrentUser,
     updateAccountDetails,
     updateUserAvatar,
-    getUserChannelProfile
+    getUserChannelProfile,
+    getWatchHistory
 } from '../controllers/user.controller.js'
 import {uploads} from '../middlewares/multer.middleware.js'
 import {verifyJwt} from '../middlewares/auth.middleware.js';
@@ -22,11 +23,13 @@ router.route('/register').post(
     RegisterUser);
 
 router.route('/login').post(uploads.none(),LoginUser); //for enabling form data too uploads.none()
-router.route('/logout').post(verifyJwt,LogoutUser);
 router.route('/refresh-token').post(generateNewRefreshToken);
+//secured routes
+router.route('/logout').post(verifyJwt,LogoutUser);
 router.route('/update-password').post(uploads.none(),verifyJwt,updatePassword);
-router.route('/update-account').post(verifyJwt,updateAccountDetails);
-router.route('/get-current-user').post(verifyJwt,getCurrentUser);
-router.route('/update-file').post(verifyJwt,uploads.single('avatar'),updateUserAvatar);
-router.route('/user-profile/:id').post(verifyJwt,getUserChannelProfile)
+router.route('/update-account').patch(verifyJwt,updateAccountDetails);
+router.route('/get-current-user').get(verifyJwt,getCurrentUser);
+router.route('/update-file').patch(verifyJwt,uploads.single('avatar'),updateUserAvatar);
+router.route('/user-profile/:username').get(verifyJwt,getUserChannelProfile)
+router.route('/watch-history').get(verifyJwt,getWatchHistory)
 export default router;
