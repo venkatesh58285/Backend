@@ -1,5 +1,5 @@
 import {Router} from 'express';
-import verifyJwt from '../middlewares/auth.middleware.js';
+import {verifyJwt} from '../middlewares/auth.middleware.js';
 import {
      SubscribeToChannel,
     UnSubscribeToChannel,
